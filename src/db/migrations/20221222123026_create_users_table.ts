@@ -9,8 +9,6 @@ export async function up(knex: Knex): Promise<void> {
     table.increments('id').unique()
     table.string('email', 255)
     table.string('name', 255)
-    table.string('surname', 255)
-    table.integer('age')
     table.timestamps()
   })
 }

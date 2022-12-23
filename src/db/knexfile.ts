@@ -1,23 +1,24 @@
 // Update with your config settings.
-
+import dotenv from 'dotenv'
+dotenv.config()
 
 export const config = {
   development: {
     client: 'pg',
     connection: {
-      host: 'localhost',
-      database: 'users_development',
-      user: 'vladprotsevich',
-      password: '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',
-      port: 5432
+      host: process.env.DB_HOST,
+      database: process.env.DB,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      port: process.env.PORT,
     },
     migrations: {
       extension: 'ts',
       directory: './migrations',
-      tableName: 'users_development'
+      tableName: 'knex_migrations'
     },
-    useNullAsDefault: true
-  }
-} as Record<string, any>;
+    useNullAsDefault: true,
+  },
+} as Record<string, any>
 
-export default config;
+export default config
