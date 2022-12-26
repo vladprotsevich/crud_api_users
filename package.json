@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "npx nodemon",
+    "dev": "NODE_ENV=developemnt npx nodemon",
     "build": "rimraf ./dist && npx tsc",
     "start": "npm run dist && node dist/main",
     "lint": "npx eslint ./src",
