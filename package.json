@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "NODE_ENV=developemnt npx nodemon",
     "build": "rimraf ./dist && npx tsc",
-    "start": "npm run dist && node dist/main",
+    "start": "npm run build && node dist/main",
     "lint": "npx eslint ./src",
     "format": "npx eslint ./src --fix",
     "migrate:make": "npm run build && knex migrate:make -x ts --knexfile=src/db/knexfile.ts",
@@ -22,6 +22,8 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
     "express": "^4.18.2",
     "knex": "^2.3.0",
     "pg": "^8.8.0"

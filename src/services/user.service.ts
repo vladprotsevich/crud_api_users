@@ -1,28 +1,43 @@
-import { User } from '../interfaces/user.interface'
 import { db } from '../db/db.provider'
-
+import { AddNewUserBody } from '../bodies/add-new-user.body'
+import { validateOrReject } from 'class-validator'
+import { FilterUsersParams } from '../bodies/filter-users.params'
+import { Knex } from 'knex'
+import { User } from '../interfaces/user.interface'
 export class UserService {
-  async getAllUsers() {
-    try {
-      return await db<User>('users').select('id', 'name', 'email')
-    } catch {
-      console.log('You dont have any users yet')
-    }
+  userDb() {
+    return db('users')
   }
 
-  async addNewUser(body: Object) {
-    try {
-      const id = await db('users').insert(body, 'id')
-      return db('users').select().where(id[0])
-    } catch (err) {
-      console.log(`Create user failed. ${err} occured.`)
-    }
+  private static filterUsers(params: FilterUsersParams, query: Knex.QueryBuilder) {
+    params.name && query.andWhere('name', params.name)
+    params.email && query.andWhere('email', params.email)
+    params.age && query.andWhere('age', params.age)
+    params.country && query.andWhere('country', params.country)
   }
 
-  async updateUserInfo(body: Object) {
+  getAllUsers(params: FilterUsersParams) {
+    const query = this.userDb().select('id', 'name', 'email', 'age', 'country')
+    UserService.filterUsers(params, query)
+    params.limit && query.limit(params.limit)
+    params.offset && query.offset(params.offset)
+    params.sort && query.orderBy('created_at', params.sort)
+
+    return query
+  }
+
+  async getUserByEmail(email: string) {}
+
+  async gelAllUsersCount(params: FilterUsersParams) {}
+
+  async addNewUser(body: AddNewUserBody) {
+    return await this.userDb().insert(body).returning('*')
+  }
+
+  async updateUserInfo(body: AddNewUserBody) {
     try {
-      const id = body['id' as keyof Object]
-      await db('users').where({ id: id }).update(body)
+      const id = body.id
+      await this.userDb().update(body).where({ id: id })
       return await db('users').select().where({ id: id })
     } catch (err) {
       console.log(`Update user failed. ${err} occured.`)
@@ -31,7 +46,7 @@ export class UserService {
 
   async removeUser(id: number) {
     try {
-      await db('users').where({ id: id }).del()
+      await this.userDb().where({ id: id }).del()
       return `User with id '${id}' were removed from db`
     } catch (err) {
       console.log(`Removing user failed. ${err} occured.`)
