@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { AddNewUserBody } from '../bodies/add-new-user.body'
+import { NewUserBody } from '../bodies/new-user.body'
 import { Pagination } from '../common/pagionation.response'
 import { UserService } from '../services/user.service'
 
@@ -10,24 +10,18 @@ export class UsersController {
 
   async getUsers(req: Request, res: Response) {
     const users = await this.usersService.getAllUsers(req.query)
-    res.send(new Pagination(users))
-  }
-
-  async createUser(req: Request, res: Response) {
-    const userBody: AddNewUserBody = req.body
-    const user = await this.usersService.addNewUser(userBody)
-    res.send(user)
+    res.status(200).send(new Pagination(users))
   }
 
   async updateUser(req: Request, res: Response) {
-    const body: AddNewUserBody = req.body
+    const body: NewUserBody = req.body
     const updatedUser = await this.usersService.updateUserInfo(body)
-    res.send(updatedUser)
+    res.status(200).send(updatedUser)
   }
 
   async deleteUser(req: Request, res: Response) {
     const userId: number = req.body.id
     const removedUser = await this.usersService.removeUser(userId)
-    res.send(removedUser)
+    res.status(200).send(removedUser)
   }
 }
