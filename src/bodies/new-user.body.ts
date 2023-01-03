@@ -21,4 +21,5 @@ export class NewUserBody {
 
   token?: string
   salt?: string
+  refresh_token?: any
 }

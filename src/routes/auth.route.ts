@@ -21,6 +21,6 @@ authRouter.post('/logout', verifyUserToken, async (req: Request, res: Response) 
   await auth.logout(req, res)
 })
 
-authRouter.post('/refresh', verifyUserToken, async (req: Request, res: Response) => {
+authRouter.post('/refresh', async (req: Request, res: Response) => {
   await auth.refreshToken(req, res)
 })
