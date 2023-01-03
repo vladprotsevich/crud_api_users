@@ -10,6 +10,14 @@ dotenv.config() // if i remove this line, i will get 'Error: secretOrPrivateKey 
 export class AuthService {
   constructor(private userService: UserService) {}
 
+  getUserById(id: string) {
+    return db('users').where('id', id)
+  }
+
+  getUserByEmail(email: string) {
+    return db('users').where('email', email)
+  }
+
   async register(body: NewUserBody) {
     const ecnrypted_password = await this.encryptUserPassword(body.password)
     body.password = ecnrypted_password
@@ -18,13 +26,13 @@ export class AuthService {
   }
 
   async login(email: string, password: string) {
-    const user = await db('users').where('email', email).first()
+    const user = await this.getUserByEmail(email).first()
 
     if (user && (await this.decryptUserPassword(password, user))) {
       const access_token = await this.createJWTAccessToken(user.id, user.email)
       const refresh_token = await this.createJWTRefreshToken(user.id, user.email)
 
-      await db('users').where('email', email).first().update('refresh_token', refresh_token)
+      await this.getUserByEmail(email).first().update('refresh_token', refresh_token)
 
       const token = {
         access_token: access_token,
@@ -36,7 +44,7 @@ export class AuthService {
 
   async logoutUser(access_token: string) {
     const user = await this.parseJWTToken(access_token)
-    await db('users').where('id', user.user_id).update('refresh_token', null)
+    await this.getUserById(user.user_id).update('refresh_token', null)
   }
 
   async encryptUserPassword(password: string) {
@@ -63,14 +71,14 @@ export class AuthService {
   }
 
   async refreshUsersToken(email: string, token: string) {
-    const user = await db('users').where('email', email).first()
+    const user = await this.getUserByEmail(email).first()
 
     if (user.refresh_token === token) {
       const parsed_token = await this.parseJWTToken(token)
 
       const refresh_token = this.createJWTRefreshToken(parsed_token.user_id, parsed_token.email)
 
-      await db('users').where('id', parsed_token.user_id).update('refresh_token', refresh_token)
+      await this.getUserById(parsed_token.user_id).update('refresh_token', refresh_token)
       return await this.createJWTAccessToken(parsed_token.user_id, parsed_token.email)
     }
   }

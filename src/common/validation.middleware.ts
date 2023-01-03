@@ -6,7 +6,7 @@ import { db } from '../db/db.provider'
 
 export const validateCreadentials = (ClassType: any) => async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = await db('users').select('*').where('email', req.body.email).returning('*')
+    const user = await db('users').where('email', req.body.email).returning('*')
 
     if (!user[0]) {
       throw new Error(`${req.body.email} isn't signed up`)
@@ -26,7 +26,7 @@ export const validateCreadentials = (ClassType: any) => async (req: Request, res
 
 export const validateReqBody = (ClassType: any) => async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = await db('users').select('*').where('email', req.body.email).returning('*')
+    const user = await db('users').where('email', req.body.email).returning('*')
 
     if (!!user[0]) {
       throw new Error(`${req.body.email} were already used. Select another one`)
