@@ -1,6 +1,5 @@
 import { db } from '../db/db.provider'
-import { AddNewUserBody } from '../bodies/add-new-user.body'
-import { validateOrReject } from 'class-validator'
+import { NewUserBody } from '../bodies/new-user.body'
 import { FilterUsersParams } from '../bodies/filter-users.params'
 import { Knex } from 'knex'
 import { User } from '../interfaces/user.interface'
@@ -30,26 +29,16 @@ export class UserService {
 
   async gelAllUsersCount(params: FilterUsersParams) {}
 
-  async addNewUser(body: AddNewUserBody) {
+  async addNewUser(body: NewUserBody) {
     return await this.userDb().insert(body).returning('*')
   }
 
-  async updateUserInfo(body: AddNewUserBody) {
-    try {
-      const id = body.id
-      await this.userDb().update(body).where({ id: id })
-      return await db('users').select().where({ id: id })
-    } catch (err) {
-      console.log(`Update user failed. ${err} occured.`)
-    }
+  async updateUserInfo(body: NewUserBody) {
+    return await this.userDb().update(body).where({ id: body.id }).returning('*')
   }
 
   async removeUser(id: number) {
-    try {
-      await this.userDb().where({ id: id }).del()
-      return `User with id '${id}' were removed from db`
-    } catch (err) {
-      console.log(`Removing user failed. ${err} occured.`)
-    }
+    await this.userDb().where({ id: id }).del()
+    return `User with id '${id}' were removed from db`
   }
 }
