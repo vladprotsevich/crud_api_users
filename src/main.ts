@@ -5,6 +5,9 @@ import { authRouter } from './routes/auth.route'
 import cookieParser from 'cookie-parser'
 import { usersRouter } from './routes/user.route'
 import { verifyUserToken } from './common/verifyUserToken.middleware'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const app = express()
 

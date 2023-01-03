@@ -4,9 +4,6 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { db } from '../db/db.provider'
 import { UserBody } from '../bodies/user.body'
-import dotenv from 'dotenv'
-
-dotenv.config() // if i remove this line, i will get 'Error: secretOrPrivateKey must have a value'
 export class AuthService {
   constructor(private userService: UserService) {}
 
